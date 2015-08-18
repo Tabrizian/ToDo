@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="ir.companymarketing.todo.EditActivity">
+    <item
+        android:id="@+id/action_save"
+        android:onClick="saveClickHandler"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:title="Save" />
+</menu>
