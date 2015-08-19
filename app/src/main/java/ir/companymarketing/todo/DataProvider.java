@@ -25,21 +25,24 @@ public class DataProvider {
             Log.d("DataProvider", file1);
             if (file1.endsWith(".todo")) {
                 Log.d("DataProvider", file1);
-//                new File(file1).delete();
                 try {
                     FileInputStream inputStream = context.openFileInput(file1);
                     BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-
-                    String string = br.readLine();
                     String str = null;
                     String current = null;
                     while ((str = br.readLine()) != null) {
                         current += str;
                     }
-                    br.close();
+                    int isDone = br.read();
+                    isDone = br.read();
                     ToDo todo = new ToDo(file1.substring(0, file1.length() - 5), current);
+                    Log.d("DataProvider", "The Character is: " + isDone);
+                    if ((char) isDone == 't')
+                        todo.setDone(true);
+                    else
+                        todo.setDone(false);
+                    br.close();
                     todos.add(todo);
-
                     inputStream.close();
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();

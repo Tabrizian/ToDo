@@ -1,18 +1,14 @@
 package ir.companymarketing.todo;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 
 public class EditActivity extends Activity {
@@ -48,17 +44,11 @@ public class EditActivity extends Activity {
     public void saveClickHandler(MenuItem item) {
         EditText title = (EditText) findViewById(R.id.title);
         try {
-            FileOutputStream outputStream = openFileOutput(
-                    (title.getText()).toString() + ".todo", Context.MODE_PRIVATE);
-            PrintWriter pw = new PrintWriter(outputStream);
-            pw.write("false\n");
             EditText mainText = (EditText) findViewById(R.id.editText);
-            pw.write(mainText.getText().toString());
-            Toast.makeText(this, (mainText.getText().toString()), Toast.LENGTH_LONG).show();
-            Log.d("EditActivity", outputStream.getFD().toString());
+            ToDo todo = new ToDo(title.getText().toString(), mainText.getText().toString());
+            todo.setDone(false);
+            todo.write(this);
             Toast.makeText(this, "Successfully wrote to " + String.valueOf(title.getText()) + ".todo", Toast.LENGTH_SHORT).show();
-            outputStream.close();
-            pw.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
