@@ -44,6 +44,7 @@ public class ToDo {
             pw.write(text);
         else
             Log.d("ToDo", "Message wasn't empty!");
+        pw.flush();
         outputStream.close();
         pw.close();
     }

@@ -30,11 +30,11 @@ public class DataProvider {
                     BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
                     String str = null;
                     String current = null;
+                    int isDone = br.read();
                     while ((str = br.readLine()) != null) {
                         current += str;
                     }
-                    int isDone = br.read();
-                    isDone = br.read();
+
                     ToDo todo = new ToDo(file1.substring(0, file1.length() - 5), current);
                     Log.d("DataProvider", "The Character is: " + isDone);
                     if ((char) isDone == 't')
