@@ -1,7 +1,6 @@
 package ir.companymarketing.todo;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -34,16 +33,12 @@ public class ToDo {
         PrintWriter pw = new PrintWriter(outputStream);
         if (!done) {
             pw.write("f");
-            Log.d("ToDo", "Wrote F.");
         } else {
             pw.write("t");
-            Log.d("ToDo", "Wrote T.");
         }
 
         if (text != null)
             pw.write(text);
-        else
-            Log.d("ToDo", "Message wasn't empty!");
         pw.flush();
         outputStream.close();
         pw.close();

@@ -9,12 +9,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -26,9 +26,6 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        File f = getFilesDir();
-        String path = f.getAbsolutePath();
-        Toast.makeText(this, path, Toast.LENGTH_LONG).show();
         List<ToDo> todos = DataProvider.getData(this);
         ArrayAdapter<ToDo> toDoArrayAdapter = new ToDoArrayAdapter(this, 0, todos);
         ListView list = (ListView) findViewById(android.R.id.list);
@@ -77,9 +74,24 @@ public class MainActivity extends Activity {
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
             View view = getLayoutInflater().inflate(R.layout.listview, null);
-            TextView tv = (TextView) view.findViewById(R.id.title);
+            final TextView tv = (TextView) view.findViewById(R.id.title);
             tv.setText(todos.get(position).toString());
             CheckBox checkBox = (CheckBox) view.findViewById(R.id.done);
+            Button delete = (Button) view.findViewById(R.id.delete);
+            delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    boolean deleted = MainActivity.this.deleteFile(tv.getText().toString() + ".todo");
+                    ListView lv = (ListView) findViewById(android.R.id.list);
+                    lv.invalidateViews();
+                    if (deleted) {
+                        Toast.makeText(MainActivity.this, "Deleted!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(MainActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+            });
             checkBox.setChecked(todos.get(position).isDone());
             checkBox.setOnClickListener(new View.OnClickListener() {
                 @Override
