@@ -22,6 +22,7 @@ import java.util.List;
 public class MainActivity extends Activity {
 
     private ArrayAdapter<ToDo> toDoArrayAdapter;
+    private List<ToDo> todos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +63,17 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        todos = DataProvider.getData(this);
+        toDoArrayAdapter.clear();
+        toDoArrayAdapter.addAll(todos);
+        toDoArrayAdapter.notifyDataSetChanged();
+    }
+
     class ToDoArrayAdapter extends ArrayAdapter<ToDo> {
-        List<ToDo> todos;
+
         Context context;
 
         public ToDoArrayAdapter(Context context, int resource, List<ToDo> objects) {
