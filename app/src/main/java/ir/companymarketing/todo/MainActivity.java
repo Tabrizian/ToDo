@@ -21,13 +21,15 @@ import java.util.List;
 
 public class MainActivity extends Activity {
 
+    private ArrayAdapter<ToDo> toDoArrayAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         List<ToDo> todos = DataProvider.getData(this);
-        ArrayAdapter<ToDo> toDoArrayAdapter = new ToDoArrayAdapter(this, 0, todos);
+        toDoArrayAdapter = new ToDoArrayAdapter(this, 0, todos);
         ListView list = (ListView) findViewById(android.R.id.list);
         list.setAdapter(toDoArrayAdapter);
 
@@ -82,9 +84,12 @@ public class MainActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     boolean deleted = MainActivity.this.deleteFile(tv.getText().toString() + ".todo");
-                    ListView lv = (ListView) findViewById(android.R.id.list);
-                    lv.invalidateViews();
+
                     if (deleted) {
+                        clear();
+                        todos = DataProvider.getData(MainActivity.this);
+                        addAll(todos);
+                        toDoArrayAdapter.notifyDataSetChanged();
                         Toast.makeText(MainActivity.this, "Deleted!", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(MainActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
