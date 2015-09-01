@@ -17,7 +17,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.List;
 
 
@@ -26,13 +25,16 @@ public class MainActivity extends Activity {
 
     private ArrayAdapter<ToDo> toDoArrayAdapter;
     private List<ToDo> todos;
+    private DataProvider data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        data = new DataProvider(this);
+        data.open();
 
-        List<ToDo> todos = DataProvider.getData(this);
+        List<ToDo> todos = data.getData();
         toDoArrayAdapter = new ToDoArrayAdapter(this, 0, todos);
         ListView list = (ListView) findViewById(android.R.id.list);
         list.setAdapter(toDoArrayAdapter);
@@ -46,6 +48,7 @@ public class MainActivity extends Activity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -70,10 +73,17 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        todos = DataProvider.getData(this);
+        data.open();
+        todos = data.getData();
         toDoArrayAdapter.clear();
         toDoArrayAdapter.addAll(todos);
         toDoArrayAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        data.close();
     }
 
     public void searchBtnClickHandler(MenuItem item) {
@@ -113,7 +123,7 @@ public class MainActivity extends Activity {
                     if (deleted) {
                         clear();
                         time--;
-                        todos = DataProvider.getData(MainActivity.this);
+                        todos = data.getData();
                         addAll(todos);
                         toDoArrayAdapter.notifyDataSetChanged();
                         Toast.makeText(MainActivity.this, "Deleted!", Toast.LENGTH_SHORT).show();
@@ -128,11 +138,7 @@ public class MainActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     todos.get(position).setDone(((CheckBox) v).isChecked());
-                    try {
-                        todos.get(position).write(MainActivity.this);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    todos.get(position).write(MainActivity.this);
                 }
             });
             return view;

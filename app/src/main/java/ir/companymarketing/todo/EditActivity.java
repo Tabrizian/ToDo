@@ -7,16 +7,29 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 
 public class EditActivity extends Activity {
+
+    private DataProvider dataProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
+        dataProvider = new DataProvider(this);
+        dataProvider.open();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        dataProvider.open();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dataProvider.close();
     }
 
     @Override
@@ -43,16 +56,12 @@ public class EditActivity extends Activity {
 
     public void saveClickHandler(MenuItem item) {
         EditText title = (EditText) findViewById(R.id.title);
-        try {
-            EditText mainText = (EditText) findViewById(R.id.editText);
-            ToDo todo = new ToDo(title.getText().toString(), mainText.getText().toString());
-            todo.setDone(false);
-            todo.write(this);
-            Toast.makeText(this, "Successfully wrote to " + String.valueOf(title.getText()) + ".todo", Toast.LENGTH_SHORT).show();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        EditText mainText = (EditText) findViewById(R.id.editText);
+        ToDo todo = new ToDo(title.getText().toString(), mainText.getText().toString());
+        todo.setDone(false);
+        todo.write(this);
+        Toast.makeText(this, "Successfully wrote to " + String.valueOf(title.getText()) + ".todo", Toast.LENGTH_SHORT).show();
+
     }
 }
