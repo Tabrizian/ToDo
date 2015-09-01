@@ -118,7 +118,7 @@ public class MainActivity extends Activity {
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    boolean deleted = MainActivity.this.deleteFile(tv.getText().toString() + ".todo");
+                    boolean deleted = data.remove(todos.get(position));
 
                     if (deleted) {
                         clear();
@@ -129,7 +129,6 @@ public class MainActivity extends Activity {
                         Toast.makeText(MainActivity.this, "Deleted!", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(MainActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
-
                     }
                 }
             });

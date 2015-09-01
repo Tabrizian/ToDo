@@ -5,12 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 
-/**
- * Created by dell-iman on 8/14/2015.
- */
 public class DataProvider {
 
     public static final String[] columns = {DBHelper.COLUMN_ID, DBHelper.COLUMN_TITLE, DBHelper.COLUMN_DETAIL, DBHelper.COLUMN_DONE};
@@ -50,8 +48,16 @@ public class DataProvider {
                 todo.setText(cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_DETAIL)));
                 todo.setDone(cursor.getShort(cursor.getColumnIndex(DBHelper.COLUMN_DONE)) == 1);
                 todos.add(todo);
+                Log.d("DataProvider", "" + todo.getId());
             }
         }
         return todos;
+    }
+
+    public boolean remove(ToDo todo) {
+        String where = DBHelper.COLUMN_ID + " = " + todo.getId();
+        int result = database.delete(DBHelper.TABLE_NAME, where, null);
+        Log.d("DataProvider", "" + result);
+        return (result == 1);
     }
 }
