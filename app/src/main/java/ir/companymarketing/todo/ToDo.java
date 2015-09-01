@@ -1,7 +1,5 @@
 package ir.companymarketing.todo;
 
-import android.content.Context;
-
 /**
  * Created by dell-iman on 8/14/2015.
  */
@@ -26,13 +24,6 @@ public class ToDo {
 
     public void setDone(boolean status) {
         done = status;
-    }
-
-    public void write(Context context) {
-        DataProvider dataProvider = new DataProvider(context);
-        dataProvider.open();
-        dataProvider.addData(this);
-        dataProvider.close();
     }
 
     @Override

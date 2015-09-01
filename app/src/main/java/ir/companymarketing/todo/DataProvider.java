@@ -60,4 +60,15 @@ public class DataProvider {
         Log.d("DataProvider", "" + result);
         return (result == 1);
     }
+
+    public boolean update(ToDo todo) {
+
+        ContentValues values = new ContentValues();
+        values.put(DBHelper.COLUMN_TITLE, todo.getTitle());
+        values.put(DBHelper.COLUMN_DONE, todo.isDone());
+        values.put(DBHelper.COLUMN_DETAIL, todo.getText());
+        String where = DBHelper.COLUMN_ID + " = " + todo.getId();
+        int result = database.update(DBHelper.TABLE_NAME, values, where, null);
+        return (result == 1);
+    }
 }

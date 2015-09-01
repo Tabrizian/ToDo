@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,12 +20,12 @@ import android.widget.Toast;
 import java.util.List;
 
 
-
 public class MainActivity extends Activity {
 
     private ArrayAdapter<ToDo> toDoArrayAdapter;
     private List<ToDo> todos;
     private DataProvider data;
+    private boolean state = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +33,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         data = new DataProvider(this);
         data.open();
-
+        state = false;
         List<ToDo> todos = data.getData();
         toDoArrayAdapter = new ToDoArrayAdapter(this, 0, todos);
         ListView list = (ListView) findViewById(android.R.id.list);
@@ -67,6 +67,7 @@ public class MainActivity extends Activity {
 
     public void newNoteClickHandler(MenuItem item) {
         Intent intent = new Intent(this, EditActivity.class);
+        state = true;
         startActivity(intent);
     }
 
@@ -74,6 +75,7 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
         data.open();
+        state = true;
         todos = data.getData();
         toDoArrayAdapter.clear();
         toDoArrayAdapter.addAll(todos);
@@ -84,6 +86,7 @@ public class MainActivity extends Activity {
     protected void onPause() {
         super.onPause();
         data.close();
+        state = true;
     }
 
     public void searchBtnClickHandler(MenuItem item) {
@@ -106,22 +109,32 @@ public class MainActivity extends Activity {
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
             View view = getLayoutInflater().inflate(R.layout.listview, null);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(MainActivity.this, EditActivity.class);
+                    String[] extras = {todos.get(position).getText(),
+                            todos.get(position).getTitle(), String.valueOf(todos.get(position).getId())};
+                    intent.putExtra("Data", extras);
+                    startActivity(intent);
+                }
+            });
             final TextView tv = (TextView) view.findViewById(R.id.title);
             tv.setText(todos.get(position).toString());
             CheckBox checkBox = (CheckBox) view.findViewById(R.id.done);
-            Button delete = (Button) view.findViewById(R.id.delete);
+            ImageButton delete = (ImageButton) view.findViewById(R.id.delete);
             Animation anim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.animation);
             view.setAnimation(anim);
             time++;
             anim.setStartOffset(time * 90);
-            anim.start();
+            if (!state)
+                anim.start();
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     boolean deleted = data.remove(todos.get(position));
-
+                    state = true;
                     if (deleted) {
-                        clear();
                         time--;
                         todos = data.getData();
                         addAll(todos);
@@ -137,7 +150,7 @@ public class MainActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     todos.get(position).setDone(((CheckBox) v).isChecked());
-                    todos.get(position).write(MainActivity.this);
+                    data.update(todos.get(position));
                 }
             });
             return view;

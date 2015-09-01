@@ -18,6 +18,12 @@ public class EditActivity extends Activity {
         setContentView(R.layout.activity_edit);
         dataProvider = new DataProvider(this);
         dataProvider.open();
+        if (getIntent().getStringArrayExtra("Data") != null) {
+            EditText title = (EditText) findViewById(R.id.title);
+            EditText editText = (EditText) findViewById(R.id.editText);
+            title.setText(getIntent().getStringArrayExtra("Data")[0]);
+            editText.setText(getIntent().getStringArrayExtra("Data")[1]);
+        }
     }
 
     @Override
@@ -55,13 +61,27 @@ public class EditActivity extends Activity {
     }
 
     public void saveClickHandler(MenuItem item) {
-        EditText title = (EditText) findViewById(R.id.title);
-
-        EditText mainText = (EditText) findViewById(R.id.editText);
-        ToDo todo = new ToDo(title.getText().toString(), mainText.getText().toString());
-        todo.setDone(false);
-        todo.write(this);
-        Toast.makeText(this, "Successfully wrote to " + String.valueOf(title.getText()) + ".todo", Toast.LENGTH_SHORT).show();
-
+        if (getIntent().getStringArrayExtra("Data") == null) {
+            EditText title = (EditText) findViewById(R.id.title);
+            EditText mainText = (EditText) findViewById(R.id.editText);
+            ToDo todo = new ToDo(title.getText().toString(), mainText.getText().toString());
+            todo.setDone(false);
+            dataProvider.addData(todo);
+            if (dataProvider.update(todo))
+                Toast.makeText(this, "Todo successfully created!", Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(this, "Todo creation failed!", Toast.LENGTH_SHORT).show();
+        } else {
+            EditText title = (EditText) findViewById(R.id.title);
+            EditText mainText = (EditText) findViewById(R.id.editText);
+            ToDo todo = new ToDo(title.getText().toString(), mainText.getText().toString());
+            todo.setId(Long.valueOf(getIntent().getExtras().getStringArray("Data")[2]));
+            todo.setDone(false);
+            if (dataProvider.update(todo))
+                Toast.makeText(this, "Todo successfully updated!", Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(this, "Todo update failed!", Toast.LENGTH_SHORT).show();
+        }
     }
+
 }

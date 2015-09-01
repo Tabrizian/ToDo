@@ -3,7 +3,7 @@
     tools:context=".MainActivity">
     <item
         android:id="@+id/action_settings"
-        android:icon="@drawable/plus"
+        android:icon="@drawable/ic_action_new"
         android:onClick="newNoteClickHandler"
         android:orderInCategory="100"
         android:showAsAction="always"
