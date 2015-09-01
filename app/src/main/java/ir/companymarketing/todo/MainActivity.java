@@ -3,6 +3,7 @@ package ir.companymarketing.todo;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,15 +26,18 @@ public class MainActivity extends Activity {
     private ArrayAdapter<ToDo> toDoArrayAdapter;
     private List<ToDo> todos;
     private DataProvider data;
-    private boolean state = false;
-
+    private boolean state;
+    private SharedPreferences settings;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        settings = getPreferences(MODE_PRIVATE);
         setContentView(R.layout.activity_main);
         data = new DataProvider(this);
         data.open();
-        state = false;
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean("state", false);
+        editor.commit();
         List<ToDo> todos = data.getData();
         toDoArrayAdapter = new ToDoArrayAdapter(this, 0, todos);
         ListView list = (ListView) findViewById(android.R.id.list);
@@ -67,7 +71,9 @@ public class MainActivity extends Activity {
 
     public void newNoteClickHandler(MenuItem item) {
         Intent intent = new Intent(this, EditActivity.class);
-        state = true;
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean("state", true);
+        editor.commit();
         startActivity(intent);
     }
 
@@ -75,7 +81,9 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
         data.open();
-        state = true;
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean("state", false);
+        editor.commit();
         todos = data.getData();
         toDoArrayAdapter.clear();
         toDoArrayAdapter.addAll(todos);
@@ -86,7 +94,9 @@ public class MainActivity extends Activity {
     protected void onPause() {
         super.onPause();
         data.close();
-        state = true;
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean("state", true);
+        editor.commit();
     }
 
     public void searchBtnClickHandler(MenuItem item) {
@@ -123,21 +133,27 @@ public class MainActivity extends Activity {
             tv.setText(todos.get(position).toString());
             CheckBox checkBox = (CheckBox) view.findViewById(R.id.done);
             ImageButton delete = (ImageButton) view.findViewById(R.id.delete);
-            Animation anim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.animation);
-            view.setAnimation(anim);
+
             time++;
-            anim.setStartOffset(time * 90);
-            if (!state)
+
+            if (!settings.getBoolean("state", true)) {
+
+                Animation anim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.animation);
+                view.setAnimation(anim);
+                anim.setStartOffset(time * 90);
                 anim.start();
+            }
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     boolean deleted = data.remove(todos.get(position));
-                    state = true;
+
                     if (deleted) {
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putBoolean("state", true);
+                        editor.commit();
                         time--;
-                        todos = data.getData();
-                        addAll(todos);
+                        toDoArrayAdapter.remove(todos.get(position));
                         toDoArrayAdapter.notifyDataSetChanged();
                         Toast.makeText(MainActivity.this, "Deleted!", Toast.LENGTH_SHORT).show();
                     } else {
