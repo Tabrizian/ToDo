@@ -18,7 +18,10 @@
         </activity>
         <activity
             android:name=".EditActivity"
-            android:label="@string/title_activity_edit"></activity>
+            android:label="@string/title_activity_edit" />
+        <activity
+            android:name=".SearchActivity"
+            android:label="@string/title_activity_search"></activity>
     </application>
 
 </manifest>

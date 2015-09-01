@@ -8,4 +8,10 @@
         android:orderInCategory="100"
         android:showAsAction="always"
         android:title="+" />
+    <item
+        android:id="@+id/action_search"
+        android:onClick="searchBtnClickHandler"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="Search" />
 </menu>

@@ -8,6 +8,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -17,6 +19,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
+
 
 
 public class MainActivity extends Activity {
@@ -33,6 +36,7 @@ public class MainActivity extends Activity {
         toDoArrayAdapter = new ToDoArrayAdapter(this, 0, todos);
         ListView list = (ListView) findViewById(android.R.id.list);
         list.setAdapter(toDoArrayAdapter);
+
 
     }
 
@@ -72,9 +76,15 @@ public class MainActivity extends Activity {
         toDoArrayAdapter.notifyDataSetChanged();
     }
 
+    public void searchBtnClickHandler(MenuItem item) {
+        Intent intent = new Intent(this, SearchActivity.class);
+        startActivity(intent);
+    }
+
     class ToDoArrayAdapter extends ArrayAdapter<ToDo> {
 
         Context context;
+        private int time = 0;
 
         public ToDoArrayAdapter(Context context, int resource, List<ToDo> objects) {
             super(context, resource, objects);
@@ -90,6 +100,11 @@ public class MainActivity extends Activity {
             tv.setText(todos.get(position).toString());
             CheckBox checkBox = (CheckBox) view.findViewById(R.id.done);
             Button delete = (Button) view.findViewById(R.id.delete);
+            Animation anim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.animation);
+            view.setAnimation(anim);
+            time++;
+            anim.setStartOffset(time * 90);
+            anim.start();
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -97,6 +112,7 @@ public class MainActivity extends Activity {
 
                     if (deleted) {
                         clear();
+                        time--;
                         todos = DataProvider.getData(MainActivity.this);
                         addAll(todos);
                         toDoArrayAdapter.notifyDataSetChanged();

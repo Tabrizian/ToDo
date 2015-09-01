@@ -17,6 +17,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginBottom="25dp"
         android:background="@drawable/custom_border"
+        android:hint="Title"
         android:padding="12dip"
         android:paddingBottom="25dp"
         android:paddingTop="25dp" />
@@ -32,6 +33,7 @@
         android:layout_below="@id/title"
         android:background="@drawable/custom_border"
         android:gravity="top|start"
+        android:hint="Set the details about title..."
         android:padding="12dip" />
 
 </RelativeLayout>
